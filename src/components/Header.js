@@ -1,13 +1,14 @@
+import { Link } from 'react-router-dom'
 import { RiMovie2Fill, RiSearchLine } from 'react-icons/ri'
 
 const Header = () => {
 	return (
-		<header className="bg-slate-800 body-font shadow-md">
+		<header className="bg-slate-800 body-font">
 			<div className="container mx-auto flex flex-wrap p-4 flex-col md:flex-row items-center">
-				<a className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0" href="/">
+				<Link className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0" to="/">
 					<RiMovie2Fill className="text-2xl text-white" />
 					<span className="ml-3 text-white text-xl">Cinematic</span>
-				</a>
+				</Link>
 				<nav className="md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-400 flex flex-wrap items-center text-base justify-center">
 					<form>
 						<label className="relative block">
