@@ -1,19 +1,35 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import InfiniteScroll from "react-infinite-scroller";
 
 import MovieCard from "./MovieCard";
+import Spinner from "./Spinner";
 
-const SEARCH_API = 'https://api.themoviedb.org/3/search/movie?api_key=3fd2be6f0c70a2a598f084ddfb75487c&query='
+const SEARCH_API = (query, page = 1) => `https://api.themoviedb.org/3/search/movie?api_key=3fd2be6f0c70a2a598f084ddfb75487c&query=${query}&page=${page}`
 
 const Search = () => {
+	const [totalPages, setTotalPages] = useState(1)
     const [movies, setMovies] = useState([])
+    const [hasLoaded, setHasLoaded] = useState(false)
     const { query } = useParams()
 
+    const pageNo = useRef(1)
+
     useEffect(() => {
-        axios.get(`${SEARCH_API}${query}`)
-            .then(res => setMovies(res.data.results))
+        axios.get(SEARCH_API(query))
+            .then(res => {
+                setTotalPages(res.data.total_pages)
+                setMovies(res.data.results)
+                setHasLoaded(true)
+            })
     }, [query])
+
+    const loadMore = (page) => {
+        pageNo.current = pageNo.current + 1
+        axios.get(SEARCH_API(query, page))
+            .then(res => setMovies(prevMovies => [...prevMovies, ...res.data.results]))
+    }
 
     const movieElements = movies.map(movie => (
         <MovieCard 
@@ -38,7 +54,15 @@ const Search = () => {
         <div className="flex flex-col pb-5 min-h-screen" style={styles}>
             <h1 className="text-2xl my-3 text-center text-white">Search results for "{query}"</h1>
             <div className='flex flex-wrap justify-center'>
-                { movieElements }
+                <InfiniteScroll
+					className='relative flex flex-wrap justify-center'
+					pageStart={1}
+					loadMore={loadMore}
+					hasMore={ pageNo.current < totalPages }
+					loader={<Spinner isAbsolute={false} key={0} />}
+				>
+                    { hasLoaded ? movieElements : <Spinner isAbsolute={true} /> }
+				</InfiniteScroll>
             </div>
         </div>
     );
