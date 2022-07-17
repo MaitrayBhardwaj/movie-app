@@ -9,7 +9,7 @@ import Search from './components/Search';
 function App() {
   	return (
 		<Router>
-			<div className="flex flex-col">
+			<div className="flex text-lg overflow-x-hidden flex-col">
 				<Header />
 				<Routes>
 					<Route path="/search/:query" element={ <Search /> } />

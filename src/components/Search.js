@@ -17,6 +17,7 @@ const Search = () => {
     const pageNo = useRef(1)
 
     useEffect(() => {
+        document.title =`Search - "${query}"`
         axios.get(SEARCH_API(query))
             .then(res => {
                 setTotalPages(res.data.total_pages)

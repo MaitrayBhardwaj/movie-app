@@ -17,10 +17,12 @@ const Movie = () => {
     const { movieID } = useParams()
 
     useEffect(() => {
+        document.title = 'Loading...'
         axios.get(MOVIE_API(movieID))
             .then(res => {
                 setMovieData(res.data)
                 setHasLoaded(true)
+                document.title = res.data.title
             })
     }, [movieID])
 
@@ -33,16 +35,16 @@ const Movie = () => {
     }
 
     const genreElements = movieData?.genres.map(genre => (
-        <div key={genre.id} className="bg-white text-slate-900 hover:bg-slate-900 hover:text-white py-2 px-4 mr-2 rounded-full">{genre.name}</div>
+        <div key={genre.id} className="bg-white text-slate-900 my-2 hover:bg-slate-900 hover:text-white py-2 px-4 mr-2 rounded-full">{genre.name}</div>
     ))
 
     return (
-        <div className='py-8 px-12 relative mx-0 min-h-screen bg-slate-700' style={styles}>
+        <div className='py-8 text-lg px-12 relative mx-0 min-h-screen bg-slate-700' style={styles}>
             {
                 hasLoaded ?
                 <>
                     <section className="text-white flex flex-col body-font">
-                        <div className="container flex p-2 md:flex-row flex-col items-center">
+                        <div className="container flex p-2 lg:flex-row md:flex-col md:items-start items-center">
                             <div>
                                 <img 
                                     className="object-cover object-center w-64 h-96 rounded" 
@@ -50,12 +52,12 @@ const Movie = () => {
                                     src={movieData.poster_path ? `${IMG_PATH}/${movieData.poster_path}` : imgNA }
                                 />
                             </div>
-                            <div className="lg:flex-grow md:w-1/2 flex flex-col md:items-start md:text-left items-center text-center ml-5">
-                                <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-white">
+                            <div className="lg:flex-grow md:w-1/2 flex flex-col md:items-start md:text-left items-center text-center lg:ml-5 md:ml-0">
+                                <h1 className="title-font w-full sm:text-6xl my-3 text-5xl mb-4 font-medium text-white">
                                     { movieData.title }
                                 </h1>
                                 <p className='font-bold'>{movieData.tagline}</p>
-                                <p className="mb-8 my-3">{movieData.overview}</p>
+                                <p className="mb-8 my-3 text-left pt-2 pb-1 md:w-[80vw] lg:w-[65vw]">{movieData.overview}</p>
                                 <div className="flex text-2xl">
                                     <a href={`https://www.imdb.com/title/${movieData.imdb_id}`} rel="noreferrer" target="_blank">
                                         <FaImdb className="mr-3" />
@@ -71,7 +73,7 @@ const Movie = () => {
                             </div>
                         </div>
                         <div>
-                            <div className='flex my-2 justify-center'>
+                            <div className='flex flex-wrap my-2 justify-center'>
                                 { genreElements }
                             </div>
                             <div className='flex items-center'>
