@@ -1,9 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import axios from 'axios'
 import { useParams } from 'react-router-dom';
+import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore'
 
-import { FaDollarSign, FaImdb } from 'react-icons/fa'
+import { FaDollarSign, FaImdb, FaPlusCircle } from 'react-icons/fa'
 import { BsBoxArrowUpRight } from 'react-icons/bs'
+
+import { firestore } from '../firebase'
+import { UserContext } from '../context/UserContext'
 
 import Spinner from './Spinner'
 
@@ -14,7 +18,10 @@ const imgNA = 'https://2gyntc2a2i9a22ifya16a222-wpengine.netdna-ssl.com/wp-conte
 const Movie = () => {
     const [movieData, setMovieData] = useState({ genres: [] })
     const [hasLoaded, setHasLoaded] = useState(false)
+    const [isInWatchList, setIsInWatchList] = useState(false)
     const { movieID } = useParams()
+
+    const { user } = useContext(UserContext)
 
     useEffect(() => {
         document.title = 'Loading...'
@@ -24,7 +31,29 @@ const Movie = () => {
                 setHasLoaded(true)
                 document.title = res.data.title
             })
-    }, [movieID])
+        if(user) {
+            const docRef = doc(firestore, "watchlists", user?.uid);
+            getDoc(docRef)
+                .then(res => console.log(res.data()))
+        }
+    }, [movieID, user])
+
+    const addtoWatchList = async () => {
+        const userRef = doc(firestore, 'watchlists', user.uid)
+        const newMovie = {
+            movieID: movieData.id,
+            movieName: movieData.title,
+            moviePoster: movieData.poster_path
+        }
+
+        await updateDoc(userRef, {
+            list: arrayUnion(newMovie)
+        })
+    }
+
+    const removeFromWatchList = async () => {
+
+    }
 
     const styles = {
         backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url(${IMG_PATH}${movieData?.backdrop_path})`, 
@@ -56,6 +85,15 @@ const Movie = () => {
                                 <h1 className="title-font w-full sm:text-6xl my-3 text-5xl mb-4 font-medium text-white">
                                     { movieData.title }
                                 </h1>
+                                { 
+                                    user && 
+                                    <button
+                                        onClick={addtoWatchList} 
+                                        className="bg-green-600 text-md p-1 my-2 flex items-center rounded-md text-white"
+                                    >
+                                        <FaPlusCircle className="mx-1" /> <span className="mx-1">Add to watchlist</span>
+                                    </button>
+                                }
                                 <p className='font-bold'>{movieData.tagline}</p>
                                 <p className="mb-8 my-3 text-left pt-2 pb-1 md:w-[80vw] lg:w-[65vw]">{movieData.overview}</p>
                                 <div className="flex text-2xl">

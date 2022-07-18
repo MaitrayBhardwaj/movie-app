@@ -1,9 +1,19 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { RiMovie2Fill, RiSearchLine } from 'react-icons/ri'
+import { FaGoogle } from 'react-icons/fa'
+import { getAuth, signOut, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+import { doc, setDoc } from 'firebase/firestore'
+
+import { firestore } from '../firebase'
+import { UserContext } from '../context/UserContext'
+
+const auth = getAuth()
+const provider = new GoogleAuthProvider()	
 
 const Header = () => {
 	const [searchQuery, setSearchQuery] = useState('')
+	const { user, setUser } = useContext(UserContext)
 
 	const navigate = useNavigate()
 
@@ -17,6 +27,33 @@ const Header = () => {
 		navigate(`/search/${searchQuery}`)
 	}
 
+	const handleSignIn = () => {
+		signInWithPopup(auth, provider)
+			.then(res => {
+				console.log(res.user)
+				setUser(res.user);
+				const { creationTime, lastSignInTime } = res.user.metadata
+				if(creationTime === lastSignInTime){
+					setDoc(doc(firestore, "watchlists", res.user.uid), {
+						list: []
+					})
+					.then(res => console.log(res))
+				}
+			}).catch(err => {
+				console.log(err)
+			});
+	}
+
+	const handleSignOut = () => {
+		signOut(auth)
+			.then(() => {
+				setUser(null)
+			})
+			.catch(err => {
+				console.log(err)
+			});		  
+	}
+
 	return (
 		<header className="bg-slate-800 body-font">
 			<div className="container mx-auto flex flex-wrap p-4 flex-col md:flex-row items-center">
@@ -24,7 +61,7 @@ const Header = () => {
 					<RiMovie2Fill className="text-2xl text-white" />
 					<span className="ml-3 text-white text-xl">Cinematic</span>
 				</Link>
-				<nav className="md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-400 flex flex-wrap items-center text-base justify-center">
+				<nav className="md:ml-4 grow md:py-1 md:pl-4 md:border-l md:border-gray-400 flex flex-wrap items-center text-base justify-between">
 					<form onSubmit={handleSubmit}>
 						<label className="relative block">
 							<span className="sr-only">Search</span>
@@ -41,6 +78,23 @@ const Header = () => {
 							/>
 						</label>
 					</form>
+					{
+						user ? 
+						<div className='ml-auto flex items-center'>
+							<button 
+								onClick={handleSignOut} 
+								className="rounded-md text-white mx-2 bg-transparent p-3"
+							>
+								Sign Out
+							</button>
+							<img src={user.photoURL} alt="User avatar" className="h-12 w-12 rounded-full" />
+						</div> :
+						<button
+							onClick={handleSignIn} 
+							className='p-3 ml-auto rounded-md flex items-center bg-transparent text-white'>
+							<FaGoogle className='mx-2' /> <span className='mx-2'>Sign In</span>
+						</button>
+					}
 				</nav>
 			</div>
 		</header>
