@@ -1,7 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
-import axios from 'axios'
 import { useParams } from 'react-router-dom';
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore'
+import { AnimatePresence } from 'framer-motion';
+import axios from 'axios'
 
 import { FaDollarSign, FaImdb, FaPlusCircle, FaMinusCircle } from 'react-icons/fa'
 import { BsBoxArrowUpRight } from 'react-icons/bs'
@@ -9,6 +10,7 @@ import { BsBoxArrowUpRight } from 'react-icons/bs'
 import { firestore } from '../firebase'
 import { UserContext } from '../context/UserContext'
 
+import Notification from './Notification'
 import Spinner from './Spinner'
 
 const MOVIE_API = (id) => `https://api.themoviedb.org/3/movie/${id}?api_key=3fd2be6f0c70a2a598f084ddfb75487c&language=en-US`
@@ -19,6 +21,7 @@ const Movie = () => {
     const [movieData, setMovieData] = useState({ genres: [] })
     const [hasLoaded, setHasLoaded] = useState(false)
     const [isInWatchList, setIsInWatchList] = useState(false)
+    const [isNotifActive, setIsNotifActive] = useState(false)
     const { movieID } = useParams()
 
     const { user } = useContext(UserContext)
@@ -36,7 +39,7 @@ const Movie = () => {
             getDoc(docRef)
                 .then(res => {
                     const { list } = res.data()
-                    for(let movie of list){
+                    for(let movie of list){ // eslint-disable-next-line
                         if(movie.movieID == movieID){
                             setIsInWatchList(true)
                             break
@@ -58,6 +61,10 @@ const Movie = () => {
             list: arrayUnion(newMovie)
         }).then(() => {
             setIsInWatchList(true)
+            setIsNotifActive(() => {
+                setTimeout(() => setIsNotifActive(false), 2500)
+                return true
+            })
         })
     }
 
@@ -73,6 +80,10 @@ const Movie = () => {
             list: arrayRemove(thisMovie)
         }).then(() => {
             setIsInWatchList(false)
+            setIsNotifActive(() => {
+                setTimeout(() => setIsNotifActive(false), 2500)
+                return true
+            })
         })
     }
 
@@ -94,6 +105,9 @@ const Movie = () => {
                 hasLoaded ?
                 <>
                     <section className="text-white flex flex-col body-font">
+                        <AnimatePresence>
+                            { isNotifActive && <Notification message={ isInWatchList ? 'Added to watchlist' : 'Removed from watchlist' } /> }
+                        </AnimatePresence>
                         <div className="container flex p-2 lg:flex-row md:flex-col md:items-start items-center">
                             <div>
                                 <img 

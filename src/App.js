@@ -9,6 +9,7 @@ import Footer from './components/Footer';
 import Movie from './components/Movie';
 import Search from './components/Search';
 import Watchlist from './components/Watchlist';
+import Error from './components/Error';
 
 function App() {
 	const [user, setUser] = useState(null)
@@ -22,7 +23,8 @@ function App() {
 						<Route path="/watchlist" element={ <Watchlist /> } />
 						<Route path="/search/:query" element={ <Search /> } />
 						<Route path="/movie/:movieID" element={ <Movie /> } />
-						<Route path="/" element={ <Home /> } />
+						<Route path="/" exact element={ <Home /> } />
+						<Route path="*" element={ <Error /> } />
 					</Routes>
 					<Footer />
 				</div>

@@ -37,7 +37,6 @@ const Header = () => {
 					setDoc(doc(firestore, "watchlists", res.user.uid), {
 						list: []
 					})
-					.then(res => console.log(res))
 				}
 			}).catch(err => {
 				console.log(err)
