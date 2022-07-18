@@ -33,12 +33,15 @@ const MovieCard = (props) => {
 						<h2 className="text-md">{ props.title }</h2>
 					</motion.div>
 				}
-				<div
-					style={styles}
-					className="absolute top-2 right-2 h-8 w-8 flex justify-center items-center rounded-[50%] p-1 text-amber-500 text-xs border-gray-700 border-2 bg-gray-800"
-				>
-					{props.score}
-				</div>
+				{
+					props.score &&
+					<div
+						style={styles}
+						className="absolute top-2 right-2 h-8 w-8 flex justify-center items-center rounded-[50%] p-1 text-amber-500 text-xs border-gray-700 border-2 bg-gray-800"
+					>
+						{props.score}
+					</div>
+				}
 			</motion.div>
 		</Link>
 	);

@@ -81,9 +81,12 @@ const Header = () => {
 					{
 						user ? 
 						<div className='ml-auto flex items-center'>
+							<Link to='/watchlist' className="text-white bg-transparent p-3">
+								Your watchlist
+							</Link>
 							<button 
 								onClick={handleSignOut} 
-								className="rounded-md text-white mx-2 bg-transparent p-3"
+								className="text-white mx-2 bg-transparent p-3"
 							>
 								Sign Out
 							</button>
@@ -91,7 +94,7 @@ const Header = () => {
 						</div> :
 						<button
 							onClick={handleSignIn} 
-							className='p-3 ml-auto rounded-md flex items-center bg-transparent text-white'>
+							className='p-3 ml-auto flex items-center bg-transparent text-white'>
 							<FaGoogle className='mx-2' /> <span className='mx-2'>Sign In</span>
 						</button>
 					}

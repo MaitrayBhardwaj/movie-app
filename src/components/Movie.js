@@ -3,7 +3,7 @@ import axios from 'axios'
 import { useParams } from 'react-router-dom';
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore'
 
-import { FaDollarSign, FaImdb, FaPlusCircle } from 'react-icons/fa'
+import { FaDollarSign, FaImdb, FaPlusCircle, FaMinusCircle } from 'react-icons/fa'
 import { BsBoxArrowUpRight } from 'react-icons/bs'
 
 import { firestore } from '../firebase'
@@ -34,7 +34,15 @@ const Movie = () => {
         if(user) {
             const docRef = doc(firestore, "watchlists", user?.uid);
             getDoc(docRef)
-                .then(res => console.log(res.data()))
+                .then(res => {
+                    const { list } = res.data()
+                    for(let movie of list){
+                        if(movie.movieID == movieID){
+                            setIsInWatchList(true)
+                            break
+                        }
+                    }
+                })
         }
     }, [movieID, user])
 
@@ -46,13 +54,26 @@ const Movie = () => {
             moviePoster: movieData.poster_path
         }
 
-        await updateDoc(userRef, {
+        updateDoc(userRef, {
             list: arrayUnion(newMovie)
+        }).then(() => {
+            setIsInWatchList(true)
         })
     }
 
     const removeFromWatchList = async () => {
+        const userRef = doc(firestore, 'watchlists', user.uid)
+        const thisMovie = {
+            movieID: movieData.id,
+            movieName: movieData.title,
+            moviePoster: movieData.poster_path
+        }
 
+        updateDoc(userRef, {
+            list: arrayRemove(thisMovie)
+        }).then(() => {
+            setIsInWatchList(false)
+        })
     }
 
     const styles = {
@@ -88,10 +109,11 @@ const Movie = () => {
                                 { 
                                     user && 
                                     <button
-                                        onClick={addtoWatchList} 
-                                        className="bg-green-600 text-md p-1 my-2 flex items-center rounded-md text-white"
+                                        onClick={isInWatchList ? removeFromWatchList : addtoWatchList} 
+                                        className={`${isInWatchList ? 'bg-red-600' : 'bg-green-600' } text-md p-1 my-2 flex items-center rounded-md text-white`}
                                     >
-                                        <FaPlusCircle className="mx-1" /> <span className="mx-1">Add to watchlist</span>
+                                        { isInWatchList ? <FaMinusCircle className="mx-1" />  : <FaPlusCircle className="mx-1" /> }
+                                        <span className="mx-1">{isInWatchList ? `Remove from watchlist` : 'Add to Watchlist'}</span>
                                     </button>
                                 }
                                 <p className='font-bold'>{movieData.tagline}</p>

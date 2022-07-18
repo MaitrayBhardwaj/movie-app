@@ -51,7 +51,6 @@ const Home = () => {
 			img={movie.poster_path}
 			score={movie.vote_average}
 			title={movie.title}
-			releaseDate={movie.release_date}
 		/>
 	))
 
