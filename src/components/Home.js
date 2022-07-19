@@ -5,7 +5,7 @@ import InfiniteScroll from 'react-infinite-scroller'
 import MovieCard from './MovieCard'
 import Spinner from './Spinner'
 
-const API_URL = (method) => `https://api.themoviedb.org/3/discover/movie?sort_by=${method}&api_key=3fd2be6f0c70a2a598f084ddfb75487c&page=`
+const API_URL = (method) => `https://api.themoviedb.org/3/discover/movie?sort_by=${method}&api_key=${process.env.REACT_APP_TMDB_API_KEY}&page=`
 const methods = ['popularity.desc', 'vote_average.desc&vote_count.gte=200', 'release_date.desc', 'revenue.desc']
 const methodNames = ['Popular', 'Top Rated', 'Upcoming', 'Top Grossing']
 

@@ -1,6 +1,12 @@
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 const Error = () => {
+
+    useEffect(() => {
+        document.title = 'Error'
+    })
+
     const styles = {
 		backgroundImage: "url('https://cdn.wallpapersafari.com/73/59/V06ozM.jpg')",
 		backgroundAttachment: 'fixed',

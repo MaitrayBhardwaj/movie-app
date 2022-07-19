@@ -6,7 +6,7 @@ import InfiniteScroll from "react-infinite-scroller";
 import MovieCard from "./MovieCard";
 import Spinner from "./Spinner";
 
-const SEARCH_API = (query, page = 1) => `https://api.themoviedb.org/3/search/movie?api_key=3fd2be6f0c70a2a598f084ddfb75487c&query=${query}&page=${page}`
+const SEARCH_API = (query, page = 1) => `https://api.themoviedb.org/3/search/movie?api_key=${process.env.REACT_APP_TMDB_API_KEY}&query=${query}&page=${page}`
 
 const Search = () => {
 	const [totalPages, setTotalPages] = useState(1)

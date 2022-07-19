@@ -14,6 +14,7 @@ const Watchlist = () => {
 
     useEffect(() => {
         if(user){
+            document.title = "Your Watchlist"
             const docRef = doc(firestore, "watchlists", user?.uid);
             getDoc(docRef)
                 .then(res => {
@@ -21,7 +22,10 @@ const Watchlist = () => {
                     setMovies(list)
                 })
         }
-    }, [])
+        else {
+            navigate('/not_found')
+        }
+    }, [user, navigate])
 
     const movieElements = movies.map(movie => (
         <MovieCard
@@ -43,7 +47,7 @@ const Watchlist = () => {
     return (
         <div className='min-h-screen p-2 flex flex-col items-center' style={styles}>
             <h1 className='text-3xl my-3 text-white'>Your Watchlist</h1>
-            <div className="flex flex-wrap">
+            <div className="flex flex-wrap justify-center">
                 { movieElements }
             </div>
         </div>

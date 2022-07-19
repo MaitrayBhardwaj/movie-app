@@ -4,7 +4,7 @@ import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firest
 import { AnimatePresence } from 'framer-motion';
 import axios from 'axios'
 
-import { FaDollarSign, FaImdb, FaPlusCircle, FaMinusCircle } from 'react-icons/fa'
+import { FaImdb, FaPlusCircle, FaMinusCircle } from 'react-icons/fa'
 import { BsBoxArrowUpRight } from 'react-icons/bs'
 
 import { firestore } from '../firebase'
@@ -13,7 +13,7 @@ import { UserContext } from '../context/UserContext'
 import Notification from './Notification'
 import Spinner from './Spinner'
 
-const MOVIE_API = (id) => `https://api.themoviedb.org/3/movie/${id}?api_key=3fd2be6f0c70a2a598f084ddfb75487c&language=en-US`
+const MOVIE_API = (id) => `https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=en-US`
 const IMG_PATH = 'https://image.tmdb.org/t/p/w1280/'
 const imgNA = 'https://2gyntc2a2i9a22ifya16a222-wpengine.netdna-ssl.com/wp-content/uploads/sites/29/2014/12/Image-Not-Available.jpg'
 
@@ -33,6 +33,9 @@ const Movie = () => {
                 setMovieData(res.data)
                 setHasLoaded(true)
                 document.title = res.data.title
+            })
+            .catch(err => {
+                console.log('...')
             })
         if(user) {
             const docRef = doc(firestore, "watchlists", user?.uid);
@@ -108,7 +111,7 @@ const Movie = () => {
                         <AnimatePresence>
                             { isNotifActive && <Notification message={ isInWatchList ? 'Added to watchlist' : 'Removed from watchlist' } /> }
                         </AnimatePresence>
-                        <div className="container flex p-2 lg:flex-row md:flex-col md:items-start items-center">
+                        <div className="container flex-col flex p-2 lg:flex-row md:items-start items-center">
                             <div>
                                 <img 
                                     className="object-cover object-center w-64 h-96 rounded" 
@@ -132,9 +135,9 @@ const Movie = () => {
                                 }
                                 <p className='font-bold'>{movieData.tagline}</p>
                                 <p className="mb-8 my-3 text-left pt-2 pb-1 md:w-[80vw] lg:w-[65vw]">{movieData.overview}</p>
-                                <div className="flex text-2xl">
+                                <div className="flex items-center text-2xl">
                                     <a href={`https://www.imdb.com/title/${movieData.imdb_id}`} rel="noreferrer" target="_blank">
-                                        <FaImdb className="mr-3" />
+                                        <FaImdb className="text-3xl mr-3" />
                                     </a>
                                     <a
                                         href={movieData.homepage}
@@ -149,9 +152,6 @@ const Movie = () => {
                         <div>
                             <div className='flex flex-wrap my-2 justify-center'>
                                 { genreElements }
-                            </div>
-                            <div className='flex items-center'>
-                                <div className='flex'><FaDollarSign /><span>Budget: {movieData.budget}</span></div>
                             </div>
                         </div>
                     </section>

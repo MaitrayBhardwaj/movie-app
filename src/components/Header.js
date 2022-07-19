@@ -30,7 +30,6 @@ const Header = () => {
 	const handleSignIn = () => {
 		signInWithPopup(auth, provider)
 			.then(res => {
-				console.log(res.user)
 				setUser(res.user);
 				const { creationTime, lastSignInTime } = res.user.metadata
 				if(creationTime === lastSignInTime){
@@ -60,7 +59,7 @@ const Header = () => {
 					<RiMovie2Fill className="text-2xl text-white" />
 					<span className="ml-3 text-white text-xl">Cinematic</span>
 				</Link>
-				<nav className="md:ml-4 grow md:py-1 md:pl-4 md:border-l md:border-gray-400 flex flex-wrap items-center text-base justify-between">
+				<nav className="md:ml-4 grow md:py-1 md:pl-4 md:border-l md:border-gray-400 flex flex-wrap items-center text-base justify-center">
 					<form onSubmit={handleSubmit}>
 						<label className="relative block">
 							<span className="sr-only">Search</span>
@@ -79,7 +78,7 @@ const Header = () => {
 					</form>
 					{
 						user ? 
-						<div className='ml-auto flex items-center'>
+						<div className='md:ml-auto md:mt-2 flex items-center'>
 							<Link to='/watchlist' className="text-white bg-transparent p-3">
 								Your watchlist
 							</Link>
@@ -89,11 +88,11 @@ const Header = () => {
 							>
 								Sign Out
 							</button>
-							<img src={user.photoURL} alt="User avatar" className="h-12 w-12 rounded-full" />
+							<img src={user.photoURL} alt="User avatar" className="h-12 w-12 rounded-full md:hidden" />
 						</div> :
 						<button
 							onClick={handleSignIn} 
-							className='p-3 ml-auto flex items-center bg-transparent text-white'>
+							className='p-3 md:ml-auto flex items-center bg-transparent text-white'>
 							<FaGoogle className='mx-2' /> <span className='mx-2'>Sign In</span>
 						</button>
 					}
