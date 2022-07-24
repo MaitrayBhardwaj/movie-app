@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore'
 import { AnimatePresence } from 'framer-motion';
 import axios from 'axios'
@@ -22,7 +22,9 @@ const Movie = () => {
     const [hasLoaded, setHasLoaded] = useState(false)
     const [isInWatchList, setIsInWatchList] = useState(false)
     const [isNotifActive, setIsNotifActive] = useState(false)
+    
     const { movieID } = useParams()
+    const navigate = useNavigate()
 
     const { user } = useContext(UserContext)
 
@@ -35,7 +37,7 @@ const Movie = () => {
                 document.title = res.data.title
             })
             .catch(err => {
-                console.log('...')
+                navigate('/not_found')
             })
         if(user) {
             const docRef = doc(firestore, "watchlists", user?.uid);
