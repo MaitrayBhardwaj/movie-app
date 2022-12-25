@@ -13,7 +13,7 @@ import { UserContext } from '../context/UserContext'
 import Notification from './Notification'
 import Spinner from './Spinner'
 
-const MOVIE_API = (id) => `https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=en-US`
+const MOVIE_API = (id) => `https://api.themoviedb.org/3/movie/${id}?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=en-US`
 const IMG_PATH = 'https://image.tmdb.org/t/p/w1280/'
 const imgNA = 'https://2gyntc2a2i9a22ifya16a222-wpengine.netdna-ssl.com/wp-content/uploads/sites/29/2014/12/Image-Not-Available.jpg'
 
