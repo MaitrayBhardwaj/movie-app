@@ -13,15 +13,18 @@ import { UserContext } from '../context/UserContext'
 import Notification from './Notification'
 import Spinner from './Spinner'
 import Review from "./Review"
+import MovieCard from './MovieCard'
 
 const MOVIE_API = (id) => `https://api.themoviedb.org/3/movie/${id}?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=en-US`
 const REVIEWS_API = (id) => `https://api.themoviedb.org/3/movie/${id}/reviews?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=en-US`
+const SIMILAR_API = (id) => `https://api.themoviedb.org/3/movie/${id}/similar?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=en-US`
 const IMG_PATH = 'https://image.tmdb.org/t/p/w1280/'
 const imgNA = 'https://2gyntc2a2i9a22ifya16a222-wpengine.netdna-ssl.com/wp-content/uploads/sites/29/2014/12/Image-Not-Available.jpg'
 
 const Movie = () => {
     const [movieData, setMovieData] = useState({ genres: [] })
     const [reviews, setReviews] = useState([])
+    const [similarMovies, setSimilarMovies] = useState([])
     const [hasLoaded, setHasLoaded] = useState(false)
     const [isInWatchList, setIsInWatchList] = useState(false)
     const [isNotifActive, setIsNotifActive] = useState(false)
@@ -46,6 +49,11 @@ const Movie = () => {
         axios.get(REVIEWS_API(movieID))
             .then(res => {
                 setReviews(res.data.results.slice(0, 4))
+            })
+
+        axios.get(SIMILAR_API(movieID))
+            .then(res => {
+                setSimilarMovies(res.data.results)
             })
 
         if(user) {
@@ -117,6 +125,10 @@ const Movie = () => {
         <Review key={review.id} avatar={review.author_details.avatar_path} author={review.author} content={review.content} />
     ))
 
+    const similarMovieElements = similarMovies.map(movie => (
+        <MovieCard key={movie.id} id={movie.id} title={movie.title} img={movie.poster_path} />
+    ))
+
     return (
         <div className='py-8 text-lg px-12 relative mx-0 min-h-screen bg-slate-700' style={styles}>
             {
@@ -168,10 +180,16 @@ const Movie = () => {
                             <div className='flex flex-wrap my-2 justify-center'>
                                 { genreElements }
                             </div>
-                            <div>
+                            <div className='my-1'>
                                 <h3 className="text-3xl mb-2">Reviews</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                     { reviewElements }
+                                </div>
+                            </div>
+                            <div className='my-1'>
+                                <h3 className="text-3xl mb-2">Similar Movies</h3>
+                                <div className='flex overflow-x-scroll'>
+                                    { similarMovieElements }
                                 </div>
                             </div>
                         </div>
