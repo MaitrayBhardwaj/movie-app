@@ -12,13 +12,16 @@ import { UserContext } from '../context/UserContext'
 
 import Notification from './Notification'
 import Spinner from './Spinner'
+import Review from "./Review"
 
 const MOVIE_API = (id) => `https://api.themoviedb.org/3/movie/${id}?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=en-US`
+const REVIEWS_API = (id) => `https://api.themoviedb.org/3/movie/${id}/reviews?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=en-US`
 const IMG_PATH = 'https://image.tmdb.org/t/p/w1280/'
 const imgNA = 'https://2gyntc2a2i9a22ifya16a222-wpengine.netdna-ssl.com/wp-content/uploads/sites/29/2014/12/Image-Not-Available.jpg'
 
 const Movie = () => {
     const [movieData, setMovieData] = useState({ genres: [] })
+    const [reviews, setReviews] = useState([])
     const [hasLoaded, setHasLoaded] = useState(false)
     const [isInWatchList, setIsInWatchList] = useState(false)
     const [isNotifActive, setIsNotifActive] = useState(false)
@@ -39,6 +42,12 @@ const Movie = () => {
             .catch(err => {
                 navigate('/not_found')
             })
+        
+        axios.get(REVIEWS_API(movieID))
+            .then(res => {
+                setReviews(res.data.results.slice(0, 4))
+            })
+
         if(user) {
             const docRef = doc(firestore, "watchlists", user?.uid);
             getDoc(docRef)
@@ -101,7 +110,11 @@ const Movie = () => {
     }
 
     const genreElements = movieData?.genres.map(genre => (
-        <div key={genre.id} className="bg-white text-slate-900 my-2 hover:bg-slate-900 hover:text-white py-2 px-4 mr-2 rounded-full">{genre.name}</div>
+        <div key={genre.id} className="bg-white cursor-pointer text-slate-900 my-2 hover:bg-slate-900 hover:text-white py-2 px-4 mr-2 rounded-full">{genre.name}</div>
+    ))
+
+    const reviewElements = reviews.map(review => (
+        <Review key={review.id} avatar={review.author_details.avatar_path} author={review.author} content={review.content} />
     ))
 
     return (
@@ -155,10 +168,16 @@ const Movie = () => {
                             <div className='flex flex-wrap my-2 justify-center'>
                                 { genreElements }
                             </div>
+                            <div>
+                                <h3 className="text-3xl mb-2">Reviews</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                    { reviewElements }
+                                </div>
+                            </div>
                         </div>
                     </section>
                     <div className="bg-slate-700 flex justify-center items-center h-12 w-12 text-amber-400 absolute top-2 p-2 right-6 rounded-[50%] border-2 border-gray-500">
-                        { movieData.vote_average }
+                        { Math.round(movieData.vote_average * 100) / 100 }
                     </div>
                 </> : <Spinner isAbsolute={true} />
             }       
