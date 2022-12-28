@@ -122,7 +122,7 @@ const Movie = () => {
     ))
 
     const reviewElements = reviews.map(review => (
-        <Review key={review.id} avatar={review.author_details.avatar_path} author={review.author} content={review.content} />
+        <Review key={review.id} avatar={review.author_details.avatar_path} rating={review.author_details.rating} author={review.author} content={review.content} />
     ))
 
     const similarMovieElements = similarMovies.map(movie => (
@@ -180,12 +180,15 @@ const Movie = () => {
                             <div className='flex flex-wrap my-2 justify-center'>
                                 { genreElements }
                             </div>
-                            <div className='my-1'>
-                                <h3 className="text-3xl mb-2">Reviews</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                    { reviewElements }
+                            {
+                                reviews.length > 0 &&
+                                <div className='my-1'>
+                                    <h3 className="text-3xl mb-2">Reviews</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                        { reviewElements }
+                                    </div>
                                 </div>
-                            </div>
+                            }
                             <div className='my-1'>
                                 <h3 className="text-3xl mb-2">Similar Movies</h3>
                                 <div className='flex overflow-x-scroll'>

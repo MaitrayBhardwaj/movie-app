@@ -4,4 +4,19 @@
 
 * {
     font-family: Abel, sans-serif !important;
+    scrollbar-width: thin;
+    scrollbar-color: #4f46e5 #f3f4f6;
+}
+
+*::-webkit-scrollbar {
+    width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: #0F172A;
+    border-radius: 10px;
 }
