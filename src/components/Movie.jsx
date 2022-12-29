@@ -17,7 +17,7 @@ import MovieCard from './MovieCard'
 
 const MOVIE_API = (id) => `https://api.themoviedb.org/3/movie/${id}?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=en-US`
 const REVIEWS_API = (id) => `https://api.themoviedb.org/3/movie/${id}/reviews?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=en-US`
-const SIMILAR_API = (id) => `https://api.themoviedb.org/3/movie/${id}/similar?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=en-US`
+const SIMILAR_API = (id) => `https://api.themoviedb.org/3/movie/${id}/recommendations?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=en-US`
 const IMG_PATH = 'https://image.tmdb.org/t/p/w1280/'
 const imgNA = 'https://2gyntc2a2i9a22ifya16a222-wpengine.netdna-ssl.com/wp-content/uploads/sites/29/2014/12/Image-Not-Available.jpg'
 
@@ -36,24 +36,23 @@ const Movie = () => {
 
     useEffect(() => {
         document.title = 'Loading...'
-        axios.get(MOVIE_API(movieID))
-            .then(res => {
-                setMovieData(res.data)
+
+        const moviePromise = axios.get(MOVIE_API(movieID))
+        const reviewsPromise = axios.get(REVIEWS_API(movieID))
+        const similarPromise = axios.get(SIMILAR_API(movieID))
+
+        Promise.all([moviePromise, reviewsPromise, similarPromise])
+            .then(values => {
+                setMovieData(values[0].data)
                 setHasLoaded(true)
-                document.title = res.data.title
+                document.title = values[0].data.title
+
+                setReviews(values[1].data.results.slice(0, 4))
+
+                setSimilarMovies(values[2].data.results)
             })
             .catch(err => {
                 navigate('/not_found')
-            })
-        
-        axios.get(REVIEWS_API(movieID))
-            .then(res => {
-                setReviews(res.data.results.slice(0, 4))
-            })
-
-        axios.get(SIMILAR_API(movieID))
-            .then(res => {
-                setSimilarMovies(res.data.results)
             })
 
         if(user) {
@@ -189,12 +188,15 @@ const Movie = () => {
                                     </div>
                                 </div>
                             }
-                            <div className='my-1'>
-                                <h3 className="text-3xl mb-2">Similar Movies</h3>
-                                <div className='flex overflow-x-scroll'>
-                                    { similarMovieElements }
+                            {
+                                similarMovies.length > 0 &&
+                                <div className='my-1'>
+                                    <h3 className="text-3xl mb-2">Similar Movies</h3>
+                                    <div className='flex overflow-x-scroll'>
+                                        { similarMovieElements }
+                                    </div>
                                 </div>
-                            </div>
+                            }
                         </div>
                     </section>
                     <div className="bg-slate-700 flex justify-center items-center h-12 w-12 text-amber-400 absolute top-2 p-2 right-6 rounded-[50%] border-2 border-gray-500">
