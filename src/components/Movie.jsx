@@ -50,6 +50,7 @@ const Movie = () => {
                 setReviews(values[1].data.results.slice(0, 4))
 
                 setSimilarMovies(values[2].data.results)
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             })
             .catch(err => {
                 navigate('/not_found')
@@ -117,19 +118,36 @@ const Movie = () => {
     }
 
     const genreElements = movieData?.genres.map(genre => (
-        <div key={genre.id} className="bg-white cursor-pointer text-slate-900 my-2 hover:bg-slate-900 hover:text-white py-2 px-4 mr-2 rounded-full">{genre.name}</div>
+        <div 
+            key={genre.id} 
+            className="bg-white cursor-pointer font-semibold text-slate-900 my-2 hover:bg-slate-900 hover:text-white py-2 px-4 mr-2 rounded-full"
+        >
+                {genre.name}
+        </div>
     ))
 
     const reviewElements = reviews.map(review => (
-        <Review key={review.id} avatar={review.author_details.avatar_path} rating={review.author_details.rating} author={review.author} content={review.content} />
+        <Review 
+            key={review.id} 
+            avatar={review.author_details.avatar_path} 
+            rating={review.author_details.rating} 
+            author={review.author} 
+            content={review.content}
+            url={review.url} 
+        />
     ))
 
     const similarMovieElements = similarMovies.map(movie => (
-        <MovieCard key={movie.id} id={movie.id} title={movie.title} img={movie.poster_path} />
+        <MovieCard 
+            key={movie.id} 
+            id={movie.id} 
+            title={movie.title} 
+            img={movie.poster_path} 
+        />
     ))
 
     return (
-        <div className='py-8 text-lg px-12 relative mx-0 min-h-screen bg-slate-700' style={styles}>
+        <div className='py-8 text-lg px-5 lg:px-12 relative mx-0 min-h-screen bg-slate-700' style={styles}>
             {
                 hasLoaded ?
                 <>
@@ -160,7 +178,7 @@ const Movie = () => {
                                     </button>
                                 }
                                 <p className='font-bold'>{movieData.tagline}</p>
-                                <p className="mb-8 my-3 text-left pt-2 pb-1 md:w-[80vw] lg:w-[65vw]">{movieData.overview}</p>
+                                <p className="mb-8 my-3 text-center pt-2 pb-1 md:text-left md:w-[80vw] lg:w-[65vw]">{movieData.overview}</p>
                                 <div className="flex items-center text-2xl">
                                     <a href={`https://www.imdb.com/title/${movieData.imdb_id}`} rel="noreferrer" target="_blank">
                                         <FaImdb className="text-3xl mr-3" />

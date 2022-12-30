@@ -20,7 +20,7 @@ const Review = (props) => {
     }
 
     return (
-        <div className="bg-slate-800 p-3 text-white my-2 rounded">
+        <div className="bg-slate-800 p-4 text-white my-2 rounded">
             <div className="flex items-center">
                 { props.avatar && <img src={avatarLink} className='w-8 h-8 mr-2 rounded-3xl' /> }
                 <span className="font-bold">{ props.author } says</span>
@@ -28,6 +28,7 @@ const Review = (props) => {
             </div>
             <div className='my-2'>
                 <ReactMarkdown rehypePlugins={[rehypeRaw]}>{ `${props.content.substring(0, 250)}...` }</ReactMarkdown>
+                <a href={props.url} className="hover:text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">Read more</a>
             </div>
         </div>
     );
