@@ -113,14 +113,14 @@ const Movie = () => {
         backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url(${IMG_PATH}${movieData?.backdrop_path})`, 
         backgrounSize: 'cover', 
         backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
+        backgroundRepeat: 'repeat',
         backgroundAttachment: 'fixed'
     }
 
     const genreElements = movieData?.genres.map(genre => (
         <div 
             key={genre.id} 
-            className="bg-white cursor-pointer font-semibold text-slate-900 my-2 hover:bg-slate-900 hover:text-white py-2 px-4 mr-2 rounded-full"
+            className="bg-white transition-all cursor-pointer font-semibold text-slate-900 my-2 hover:bg-slate-900 hover:text-white py-2 px-4 mr-2 rounded-full"
         >
                 {genre.name}
         </div>
